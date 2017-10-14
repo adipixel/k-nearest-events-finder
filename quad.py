@@ -1,12 +1,12 @@
 class Quad:
-   def __init__(self, ne, se, sw, nw, hasChild, topLeft, bottomRight):
-      self.ne = ne
-      self.se = se
-      self.nw = nw
-      self.nw = nw
-      self.hasChild = hasChild
-      self.topLeft = topLeft
-      self.bottomRight = bottomRight
-   
-   def getEvent(self):
-      return self.event
+
+	def __init__(self, n, checked, topLeft, bottomRight):
+		self.topLeft = topLeft
+		self.bottomRight = bottomRight
+		self.checked = checked
+		self.quadFlag = [False, False, False, False]
+		self.subQ = []
+		self.n = n
+
+	def setQuadFlag(num):
+		self.quadFlag[num] = True

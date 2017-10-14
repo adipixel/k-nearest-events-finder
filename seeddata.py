@@ -2,11 +2,11 @@ import random
 def generateNumberOfEvents():
     #return sum(random.randint(1, 6) for _ in range(numrolls))
     # for -10 to +10 area, 400 events can be generated at most
-    return random.randint(0, 399)
+    return random.randint(0, 15)
 
 def genRandXY():
-	randomX = random.randint(0, 19)
-	randomY = random.randint(0, 19)
+	randomX = random.randint(-10, 10)
+	randomY = random.randint(-10, 10)
 	return [randomX,randomY]
 
 
