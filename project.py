@@ -1,164 +1,180 @@
-from seeddata import generateNumberOfEvents, genRandXY, generateTickets
-from quad import Quad
-
+from operator import itemgetter
+from sets import Set
 import random
 import json
 
-# storage for randomly generated json data
-global size
-size = 32
-area = [[None for x in range(size)] for y in range(size)]
-neighbors = []
+class Node:
+	def __init__(self, location, left_child, right_child, level, distance):
+		self.location = location
+		self.left_child = left_child
+		self.right_child = right_child
+		self.level = level
+		self.distance = distance
 
-# data structure for a quad
+def kdTree(listOfEvents, level):
+	try:
+		kd = len(listOfEvents[0])
+	except IndexError as e:
+		return None
 
-def getQuadNum(n, topLeft, bottomRight, position):
-	if topLeft[0] <= position[0] and bottomRight[0]-(n/2) >= position[0]:
-		if topLeft[1] <= position[1] and bottomRight[1]-(n/2) >= position[1]:
-			return 0
-		else:
-			return 1
-	else:
-		if topLeft[1] <= position[1] and bottomRight[1]-(n/2) >= position[1]:
-			return 3
-		else:
-			return 2
-
-
-# inserting events to data structure using quad tree
-def insertEvent(event, n, quad):
-	if (n==1):
-		# insert event
-		area[event['position'][0]][event['position'][1]] = event
-	else:
-		quadNum = getQuadNum(n, quad.topLeft, quad.bottomRight, event['position'])
-		print quadNum
-		quad.subQ.append(Quad(n/2, False, [quad.topLeft[0],quad.topLeft[1]], [quad.bottomRight[0]-(n/2), quad.bottomRight[1]-(n/2)]))
-		quad.subQ.append(Quad(n/2, False, [quad.topLeft[0],quad.topLeft[1]+(n/2)], [quad.bottomRight[0]-(n/2), quad.bottomRight[1]]))
-		quad.subQ.append(Quad(n/2, False, [quad.topLeft[0]+(n/2),quad.topLeft[1]+(n/2)], [quad.bottomRight[0], quad.bottomRight[1]]))
-		quad.subQ.append(Quad(n/2, False, [quad.topLeft[0]+(n/2),quad.topLeft[1]], [quad.bottomRight[0], quad.bottomRight[1]-(n/2)]))
-
-		quad.quadFlag[quadNum] = True
-		subQuad = quad.subQ[quadNum]
-		insertEvent(event, n/2, subQuad)
+	xy = level % kd
+	listOfEvents.sort(key = itemgetter(xy))
+	median = len(listOfEvents) // 2
+	treeNode = Node(listOfEvents[median], kdTree(listOfEvents[:median], level+1), 
+		kdTree(listOfEvents[median+1:], level+1), level, -1)
+	return treeNode
 
 
-def searchEvent(user, quad):
-	userQuad = getQuadNum(quad.n, quad.topLeft, quad.bottomRight, user)
-	#print userQuad
-	if quad.n == 1:
-		cell = [quad.topLeft[0], quad.topLeft[1]]
-		if area[cell[0]][cell[1]] != None: # Verification check but can be removed.
-			neighbors.append(cell)
-			return 0
-		return 0
+def getManhattanDistance(node, userLocation):
+	manDist = abs(node.location[0] - userLocation[0]) + abs(node.location[1] - userLocation[1])
+	node.distance =manDist
+	return node
+
+
+def neighborSearch(userLocation, tree, numOfNearestEvents):
+	if tree.left_child==None and tree.right_child == None:
+		node = getManhattanDistance(tree, userLocation)
+		#print node.location
+		return [node]
 		
-	if(quad.quadFlag[userQuad] == True and quad.checked == False):
-		userSubQuad = quad.subQ[userQuad]
-		searchEvent(user, userSubQuad)
-		userSubQuad.checked = True
-
-	# move to next
-	for x in xrange(0,4):
-		if (quad.subQ[x].checked == False and quad.quadFlag[x] == True):
-			searchEvent(user, quad.subQ[x])
-			quad.subQ[x].checked = True
-
-	# special case: check for one step boxes
-
-	# 1. get quadrant num of user
-	# 2. check whether it has a valid child (true quadFlag)
-		# 2.1. if yes, goto 1 with selected sub quad
-			# 2.1.2. if leaf node with data, retrive data
-	# 4. if no, check the next quad
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def generateCoordinates():
-	#co-ordinates range from -10 to +10
-	position = genRandXY()
-	if area[position[0]][position[1]] != None:
-		position = generateCoordinates()
 	else:
-		return position
-	return position
+		curBestList1 = [] 
+		curBestList2 = []
+		# AABB check
+		axis = 0
+		if tree.level%2 == 0:
+			axis = 0
+		else:
+			axis = 1
+
+		if userLocation[axis] <= tree.location[axis]:
+			subNode = tree.left_child 
+		else:
+			subNode = tree.right_child
+		
+		# for boundary condition
+		if subNode == None:
+			return [getManhattanDistance(tree, userLocation)]
+
+		# getting the current best list
+		curBestList1 = neighborSearch(userLocation, subNode, numOfNearestEvents)
+
+		# getting distance from search node to current node
+		treeDist = getManhattanDistance(tree, userLocation)
 
 
-def getMatCoordinates(x,y):
-	# for -10 to +10 co-ordinates, n=11
-	n = 10
-	col = n + x
-	row = n - y
-	mat = [row, col]
-	return mat
+		#checking for other branch if necessary
+		if userLocation[axis]-treeDist.location[axis] <= curBestList1[-1].distance:
+			if userLocation[axis] <= tree.location[axis]:
+				subNode = tree.right_child 
+			else:
+				subNode = tree.left_child
+			
+			# for boundary condition
+			if subNode != None:
+				#return [getManhattanDistance(tree, userLocation)]
+				curBestList2 = neighborSearch(userLocation, subNode, numOfNearestEvents)
 
+		curBestList = curBestList1 + curBestList2
+		curBestList.sort(key=lambda item: item.distance)
 
-# generation of input data
-def generateSeedData(numberOfEvents, n, quad):
-	data = []
-	eventNumber = 0;
-	position = []
-	for x in xrange(0,numberOfEvents):
-		position = generateCoordinates()
-		matPos = getMatCoordinates(position[0], position[1])
-		numberOfTickets = random.randint(0,10)
-		tickets = generateTickets(numberOfTickets)
-		event = {'num': eventNumber, 'position': matPos, 'coPos': position, 'tickets': tickets}
-		eventNumber = eventNumber + 1
-		insertEvent(event, n, quad)
-	return area
+		curBestList = curBestList[:numOfNearestEvents]
+
+		if len(curBestList) >= numOfNearestEvents:
+			if curBestList[-1].distance > treeDist.distance:
+				curBestList.append(treeDist)
+		else:
+			curBestList.append(treeDist)
+
+		
+		curBestList.sort(key=lambda item: item.distance)
+
+		return curBestList
+
+def getRandomLocation(tupRange):
+	return (random.randint(tupRange[0],tupRange[1]), random.randint(tupRange[0],tupRange[1]))
+
+def generateTickets(numberOfTickets):
+	tickets = []
+	if(numberOfTickets == 0):
+		return None
+	for x in xrange(0, numberOfTickets):
+		tickets.append(round(random.uniform(1.00,500.00),2))
+	tickets.sort()
+	return tickets
 
 def main():
-	n=32
-	quad = Quad(n, False, [0,0], [n-1,n-1])
-	size = n
-	numberOfEvents = generateNumberOfEvents()
-	inputData = generateSeedData(numberOfEvents, n, quad)
+	global distance
+	distance = -1
+	getNumOfEvents = 5
+
+	data=[[None for x in range(-10, 11)] for y in range(-10,11)]
+	setOfEvents = Set()
+
+	# Generating random events
+	for x in xrange(random.randint(0,399)):
+		loc = getRandomLocation([-10,11])
+		# assuming max of 10 tickets available at each event
+		numberOfTickets = random.randint(0,10)
+		tickets = generateTickets(numberOfTickets)
+		event = {'num': x, 'position': loc, 'tickets': tickets}
+		data[loc[0]][loc[1]] = event
+		setOfEvents.add(loc)
+	
+	listOfEvents = list(setOfEvents)
+
 	with open('data.json', 'w') as outfile:
-		json.dump(inputData, outfile)
+		json.dump(data, outfile)
 	print "Random input created!"
 
-	for x in xrange(0,n):
-		for y in xrange(0,n):
-			if(x%4 == 0 and y%4 == 0):
-				if area[x][y] == None:
-					print "+",
-				else:
-					print "*",
+	
+	for x in xrange(-10,11):
+		for y in xrange(-10,11):
+			if x==0 and y == 0:
+				print "+",
 			else:
-				if area[x][y] == None:
-					print "-",
-				else:
+				if data[x][y] != None:
 					print "@",
-			
+				else:
+					print "-",
 		print ""
 
+	if len(listOfEvents)==0:
+		print "Opps! Currently are no events around you."
+		return None
 
-
+	tree = kdTree(listOfEvents, 0)
 	userNumber = input('Enter User Location (Format: x,y): ')
 	# Make sure the input is an integer number
 	x = int(userNumber[0])
 	y = int(userNumber[1])
-	inputPos = [x,y]
-	print inputPos
-	user = getMatCoordinates(x,y)
-	print user
+	userLocation = (x,y)
+	print "Events closest to",userLocation
 
-	#nearest 5 events
+	resNodeList = neighborSearch(userLocation, tree, getNumOfEvents)
+	resNodeList.sort(key=lambda item: item.distance)
 	
+	if len(resNodeList)<getNumOfEvents:
+		for x in xrange(0,len(resNodeList)):
+			dataNode = data[resNodeList[x].location[0]][resNodeList[x].location[1]]
+			print "Event:",str(dataNode["num"]).zfill(3),
+			print "-",
+			if dataNode["tickets"] != None:
+				print "$", dataNode['tickets'][0],",",
+			else:
+				print "No tickets available",
+			print "Distance",resNodeList[x].distance 
+ 
+	else:
+		for x in xrange(0,getNumOfEvents):
+			dataNode = data[resNodeList[x].location[0]][resNodeList[x].location[1]]
+			print "Event:",str(dataNode["num"]).zfill(3),
+			print "-",
+			if dataNode["tickets"] != None:
+				print "$", dataNode['tickets'][0],",",
+			else:
+				print "No tickets available",
+			print "Distance",resNodeList[x].distance 
 
-	
+
 main()

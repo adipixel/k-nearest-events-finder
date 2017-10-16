@@ -124,7 +124,7 @@ def main():
 	
 	listOfEvents = list(setOfEvents)
 
-	for x in xrange(-10,11):
+	for x in xrange(-10,11):	
 		for y in xrange(-10,11):
 			if x==0 and y == 0:
 				print "+",
@@ -134,10 +134,6 @@ def main():
 				else:
 					print "-",
 		print ""
-
-	#listOfEvents = [(-2,-5),(2,3), (5,4), (-8,5), (7,-2), (9,6), (4,7), (8,1), (7,2)]
-
-
 
 
 	tree = kdTree(listOfEvents, 0)
