@@ -25,21 +25,6 @@ def getQuadNum(n, topLeft, bottomRight, position):
 			return 2
 
 
-
-# def getQuadNum(n, x, y):
-# 	# quadrant north-west 
-# 	if (x < n/2 and y < n/2):
-# 		return 0
-# 	elif (x < n/2 and y >= n/2):
-# 		return 1
-# 	elif (x >= (n/2) and y >= (n/2)):
-# 		return 2
-# 	else:
-# 		return 3
-
-
-
-
 # inserting events to data structure using quad tree
 def insertEvent(event, n, quad):
 	if (n==1):
@@ -173,10 +158,7 @@ def main():
 	print user
 
 	#nearest 5 events
-	num = 5;
-	searchEvent(user, quad)
-	print neighbors
+	
 
-	print getQuadNum(n, quad.topLeft, quad.bottomRight, user)
-
+	
 main()
