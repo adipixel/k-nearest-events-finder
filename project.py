@@ -184,6 +184,11 @@ def main():
 	x = int(userNumber[0])
 	y = int(userNumber[1])
 	userLocation = (x,y)
+
+	# checking boundary conditions for user input
+	if x>10 or x<-10 or x>10 or x<-10:
+		print "User location out of range!"
+		return None
 	print "Events closest to",userLocation
 
 	# calling the search method
