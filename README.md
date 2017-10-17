@@ -20,6 +20,7 @@ The program will generate the input data and display the locations of all events
 Then, it will ask to enter the location of the user in the format of `x, y` (range is -10 to 10)
 4. Enter the user location co-ordinates adn hit enter
 5. Boom! the five nearest events will appear.
+
 Example Results:
 ```
 Events closest to (1, 1)
@@ -64,7 +65,8 @@ Format:
 For convenience and verification of results the input data can be plotted on a graph
 #### Steps to plot input data
 1. Goto `https://jsfiddle.net/adipixel/0p5322ou/3/`
-2. In the javascript section, paste the event location list generated on the console at line 8
+2. In the javascript section, on line 8, paste the event location list generated on the console.
+
 Example:
 ```
 [7, 3] , [8, -8] , [-2, 0] , [-7, -3] , [1, -5] , [1, 6] , [3, 7] , [-2, -7] , [8, 5] , [-10, 1] , [9, 0] , [-6, -5] , [-5, -5] , [-9, 10] , [-9, -8] , [-8, -7] , [-3, -2] , [-2, 10] , [0, 4] , [1, 1] , [3, 2] , [2, 6] , [8, 2] , [6, -3] , [-9, -3] , [6, 0] , [9, -9] , [2, -9] , [-7, -5] , [-8, -10] , [0, -3] , [0, 1] , [-3, -7] , [7, -5] , [3, 1] , [-9, -9] , [5, -8] , [9, -3] , [-10, 9] , [6, 2] , [8, -4] , [-3, 4] , [-7, -10] , [0, -9] , [-5, 0] , [10, 5] , [-2, -3] , [8, 9] , [-5, 5] , [-2, -8] , [9, -8] , [-10, 10] ,
