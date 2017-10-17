@@ -10,7 +10,12 @@ A program which accepts a user location as a pair of co- ordinates, and returns 
 - Finding 1 nearest neighbour in a balanced k-d tree with randomly distributed points takes O(log n) time on average.
 - If in case of adding new events, in the worst case, the tree can be re-balanced to get best search results.
 
+#### How might the program change if needed to support multiple events at the same location?
+Currently, the program is holding zero or one event object at each co-ordinate. It can be changes to a list of event objects using a HashMap data structure for for better results.
 
+#### How might program change working with a much larger world size?
+Since, multidimentional tree structure is used, the program would work decently for a large world size. 
+But, for best performance, alogirthm like *Quad tree algorithm* can be used. This can support millions of events scattered over large world size. 
 
 ### Execution Instructions
 1. Clone this directory using `git clone https://github.com/adipixel/nearest-events-finder.git`
