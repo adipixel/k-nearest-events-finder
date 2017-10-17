@@ -11,7 +11,7 @@ A program which accepts a user location as a pair of co- ordinates, and returns 
 - If in case of adding new events, in the worst case, the tree can be re-balanced to get best search results.
 
 #### How might the program change if needed to support multiple events at the same location?
-Currently, the program is holding zero or one event object at each co-ordinate. It can be changes to a list of event objects using a HashMap data structure for for better results.
+Currently, the program is holding zero or one event object at each co-ordinate. It can be changed to a list of event objects using a HashMap data structure for for better results.
 
 #### How might program change working with a much larger world size?
 Since, multidimentional tree structure is used, the program would work decently for a large world size. 
@@ -23,7 +23,7 @@ But, for best performance, alogirthm like *Quad tree algorithm* can be used. Thi
 3. Run `python project.py`
 The program will generate the input data and display the locations of all events.
 Then, it will ask to enter the location of the user in the format of `x, y` (range is -10 to 10)
-4. Enter the user location co-ordinates adn hit enter
+4. Enter the user location co-ordinates and hit enter
 5. Boom! the five nearest events will appear.
 
 Example Results:
@@ -40,7 +40,7 @@ Event: 078 - $ 31.54 , Distance 3
 
 ### Files
 1. `project.py` - application program file
-2. `data.json` - contains the randomly generated input data of following format
+2. `data.json` - contains the randomly generated input data of following json format
 
 Format:
 ```json
