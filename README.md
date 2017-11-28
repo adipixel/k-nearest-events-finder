@@ -63,7 +63,7 @@ Format:
 - The number tickets at each event ranges from 0 to 10 for simplicity. (But can be changed to any number in future)
 - In the five nearest events found, if any event is having zero tickets, the program lets you know that there is no ticket available for that event
 - If there are less than five events in the entire world of range -10 to 10, the program gives all the available results.
-(Example: if there are just 3 events, the program returns just 3 of them instead of 5)
+(Example: if there are just 3 events, the program returns just 3 of them instead of 5).
 
 
 ### Visualization of input data
