@@ -1,5 +1,5 @@
 # Nearest events finder
-A program which accepts a user location as a pair of co- ordinates, and returns a list of the five closest events, along with the cheapest ticket price for each event.
+A software program which accepts a user location as a pair of co-ordinates, and returns a list of the five closest events, along with the cheapest ticket price for each event.
 
 ### Summary
 - The events are randomly generated with locations on the graph that ranges from -10 to 10 in both x-axis and y-axis.
